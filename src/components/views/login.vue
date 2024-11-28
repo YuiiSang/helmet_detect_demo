@@ -1,20 +1,54 @@
 <script setup>
 import { ref, onMounted} from 'vue'
 import instance from '../../axios';
-
+import { ElMessage } from 'element-plus';
+import router from '../../routers/router.js'
 let username = ref('admin')
-let password = ref('123456')
+let password = ref()
 let vImgCode = ref('')
 let vcode = ref('')
-
+let inputVcode = ref('')
 // 获取验证码
 const getVcode = () => {
   instance.get('/getKaptcha')
    .then(result => {
-      var data = result.data;
-      vImgCode.value = data.data;
+      vcode.value = result.data.data.vcode;
+      vImgCode.value = result.data.data.kaptchaImage;
   })
 }
+// 登录
+const login = () => {
+  if (inputVcode.value == '') {
+    ElMessage.error('请输入验证码')
+    return
+  }
+  if (inputVcode.value!= vcode.value.toUpperCase()) {
+    ElMessage.error('验证码错误')
+    return
+  }
+  if (username.value == '') {
+    ElMessage.error('请输入账号')
+    return
+  }
+  if (password.value == '') {
+    ElMessage.error('请输入密码')
+    return
+  }
+  instance.post('/login', {
+    username: username.value,
+    password: password.value
+  })
+ .then(result => {
+    var data = result.data;
+    if (data.code == 200) {
+      ElMessage.success(data.msg)
+      router.push('/home')
+    } else {
+      ElMessage.error(data.msg)
+    }
+  })
+}
+
 onMounted(() => {
   getVcode()
 })
@@ -36,7 +70,7 @@ onMounted(() => {
         </el-form-item>
         <el-form-item>
           <div style="display: flex; align-items: center;">
-            <el-input v-model="vcode" placeholder="请输入验证码" style="width: 160px;"></el-input>
+            <el-input v-model="inputVcode" placeholder="请输入验证码" style="width: 160px;"></el-input>
             <img :src="vImgCode" @click="getVcode" style="cursor: pointer; margin-left: 50px;" />
           </div>
         </el-form-item>

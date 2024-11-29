@@ -42,6 +42,7 @@ const login = () => {
     var data = result.data;
     if (data.code == 200) {
       ElMessage.success(data.msg)
+      localStorage.setItem('token', data.data.token)
       router.push('/home')
     } else {
       ElMessage.error(data.msg)

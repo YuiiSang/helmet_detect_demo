@@ -21,4 +21,15 @@ public interface UserDao {
      */
     User findUserByUsername(String username);
 
+    int modifyPwd(int uid, String password);
+
+
+    /**
+     *  分页查询用户信息
+     *
+     * * */
+    int deleteUserById(int id);
+
+
+    int modifyUser(User user);
 }

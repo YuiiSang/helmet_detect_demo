@@ -18,9 +18,9 @@ public class PageServiceImpl implements PageService {
     @Resource
     private PageDao pageDao;
     @Override
-    public PageVo<?> findObjectByPage(Integer pageNum, Integer pageSize, String pageName) {
+    public PageVo<?> findObjectByPage(Integer pageNum, Integer pageSize, String pageName, String input) {
         if(pageName.equals("userPage")){
-            return pageDao.findObjectByPage(pageNum,pageSize, PagingUser.class);
+            return pageDao.findObjectByPage(pageNum,pageSize, PagingUser.class, input);
         }
 
         return null;

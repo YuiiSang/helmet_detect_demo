@@ -1,5 +1,7 @@
 package com.tanght.helmet_detect_sys_demo.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -10,6 +12,7 @@ import lombok.Data;
  */
 @Data
 public class User {
+    @JsonProperty("uId")
     private Integer uId;
     private String username;
     private String password;

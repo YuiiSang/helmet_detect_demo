@@ -6,7 +6,7 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.tanght.helmet_detect_sys_demo.common.config.JwtComponent;
 import com.tanght.helmet_detect_sys_demo.common.result.Result;
 import com.tanght.helmet_detect_sys_demo.common.util.MD5Util;
-import com.tanght.helmet_detect_sys_demo.common.vo.LoginUser;
+import com.tanght.helmet_detect_sys_demo.common.dto.LoginUser;
 
 import com.tanght.helmet_detect_sys_demo.dao.UserDao;
 import com.tanght.helmet_detect_sys_demo.pojo.User;
@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 
 /**
  * @Title: UserServiceImpl
@@ -116,5 +114,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isValidUser(String username){
         return userDao.findUserByUsername(username) != null;
+    }
+
+    @Override
+    public boolean modifyPwd(int uid, String password) {
+        password = MD5Util.getMD5(password);
+        return userDao.modifyPwd(uid, password) > 0;
+    }
+
+    @Override
+    public boolean deleteUserById(int id) {
+        return userDao.deleteUserById(id) > 0;
+    }
+
+    @Override
+    public boolean modifyUser(User user) {
+        String modifyPwd = user.getPassword();
+        user.setPassword(MD5Util.getMD5(modifyPwd));
+        return userDao.modifyUser(user) > 0;
     }
 }

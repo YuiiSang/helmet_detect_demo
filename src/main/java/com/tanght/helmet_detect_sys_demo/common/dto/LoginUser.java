@@ -1,4 +1,4 @@
-package com.tanght.helmet_detect_sys_demo.common.vo;
+package com.tanght.helmet_detect_sys_demo.common.dto;
 
 import lombok.Data;
 

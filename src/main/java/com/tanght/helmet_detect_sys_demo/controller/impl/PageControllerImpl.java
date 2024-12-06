@@ -5,10 +5,7 @@ import com.tanght.helmet_detect_sys_demo.controller.PageController;
 import com.tanght.helmet_detect_sys_demo.service.PageService;
 import jakarta.annotation.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Title: PageControllerImpl
@@ -17,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description:
  */
 @RestController
+@RequestMapping("/page")
 public class PageControllerImpl implements PageController {
     @Resource
     PageService pageService;
@@ -25,7 +23,8 @@ public class PageControllerImpl implements PageController {
     public Result<?> getPage(
             @RequestParam int pageNum,
             @RequestParam int pageSize,
-            @RequestParam String pageName) {
-        return new Result<>().success().put(pageService.findObjectByPage(pageNum, pageSize, pageName));
+            @RequestParam String pageName,
+            @RequestParam(required = false, defaultValue = "") String input) {
+        return new Result<>().success().put(pageService.findObjectByPage(pageNum, pageSize, pageName, input));
     }
 }

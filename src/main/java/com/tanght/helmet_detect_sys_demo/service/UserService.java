@@ -2,8 +2,8 @@ package com.tanght.helmet_detect_sys_demo.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.tanght.helmet_detect_sys_demo.common.result.Result;
-import com.tanght.helmet_detect_sys_demo.common.vo.LoginUser;
-import com.tanght.helmet_detect_sys_demo.common.vo.PageVo;
+import com.tanght.helmet_detect_sys_demo.common.dto.LoginUser;
+import com.tanght.helmet_detect_sys_demo.pojo.User;
 
 
 public interface UserService {
@@ -34,4 +34,20 @@ public interface UserService {
      * @return
      * */
     boolean isValidUser(String username);
+
+    /**
+     * 修改密码
+     * @param uid
+     * @param password
+     * @return
+     * */
+    boolean modifyPwd(int uid, String password);
+    /**
+     * 根据id删除用户
+     * @param id
+     * @return
+     * */
+    boolean deleteUserById(int id);
+
+    boolean modifyUser(User user);
 }

@@ -37,7 +37,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         // 从请求头获取 Token
         String token = request.getHeader("Authorization");
-        System.out.println("Token: " + token);
+        //System.out.println("Token: " + token);
         // 判断 token 是否为空
         if (ObjectUtils.isEmpty(token)) {
             // 抛出 Token 为空异常

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 public interface PageDao {
 
 
-    PageVo<?> findObjectByPage(Integer pageNum, Integer pageSize, Class clazz);
+    PageVo<?> findObjectByPage(Integer pageNum, Integer pageSize, Class clazz, String condition);
+
 
 }

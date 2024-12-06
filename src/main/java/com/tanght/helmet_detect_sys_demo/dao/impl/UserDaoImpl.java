@@ -36,7 +36,7 @@ public class UserDaoImpl implements UserDao {
                 user.setUId(rs.getInt("uId"));
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
-                user.setRealName(rs.getString("realname"));
+                user.setRealName(rs.getString("realName"));
                 user.setAge(rs.getInt("age"));
                 user.setPhone(rs.getString("phone"));
                 user.setEmail(rs.getString("email"));
@@ -45,6 +45,25 @@ public class UserDaoImpl implements UserDao {
             }
         });
         return users.isEmpty() ? null : users.get(0);
+    }
+
+    @Override
+    public int modifyPwd(int uid, String password) {
+        String sql = "update user set password = ? where uId = ?";
+        return jdbcTemplate.update(sql, password, uid);
+    }
+
+    @Override
+    public int deleteUserById(int id) {
+        String sql = "delete from user where uId = ?";
+        return jdbcTemplate.update(sql, id);
+    }
+
+    @Override
+    public int modifyUser(User user) {
+        System.out.println(user);
+        String sql = "update user set username = ?, password = ?, realName = ?, age = ?, phone = ?, email = ?, site_id = ? where uId = ?";
+        return jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRealName(), user.getAge(), user.getPhone(), user.getEmail(), user.getSiteId(), user.getUId());
     }
 
 }

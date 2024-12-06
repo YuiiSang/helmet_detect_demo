@@ -1,15 +1,14 @@
 package com.tanght.helmet_detect_sys_demo.controller.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.tanght.helmet_detect_sys_demo.common.dto.ModifyUserPwd;
 import com.tanght.helmet_detect_sys_demo.common.result.Result;
-import com.tanght.helmet_detect_sys_demo.common.vo.LoginUser;
+import com.tanght.helmet_detect_sys_demo.common.dto.LoginUser;
 import com.tanght.helmet_detect_sys_demo.controller.UserController;
+import com.tanght.helmet_detect_sys_demo.pojo.User;
 import com.tanght.helmet_detect_sys_demo.service.UserService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Title: UserController
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description:
  */
 @RestController
+@RequestMapping("/user")
 public class UserControllerImpl implements UserController {
 
     @Resource
@@ -36,4 +36,30 @@ public class UserControllerImpl implements UserController {
     public Result<?> login(@RequestBody LoginUser loginUser) {
         return userService.login(loginUser);
     }
+
+    @Override
+    @PostMapping("/modifyPwd")
+    public Result<?> modifyPwd(@RequestBody ModifyUserPwd modifyUserPwd) {
+        Result<?> result = new Result<>();
+        boolean isOk = userService.modifyPwd(modifyUserPwd.getUid(), modifyUserPwd.getPassword());
+        return isOk ? result.success("密码修改成功") : result.error("修改密码失败");
+    }
+
+    @Override
+    @GetMapping("/deleteUserById")
+    public Result<?> deleteUser(int uid) {
+        Result<?> result = new Result<>();
+        boolean isOk = userService.deleteUserById(uid);
+        return isOk ? result.success("删除成功") : result.error("删除失败");
+    }
+
+    @Override
+    @PostMapping("/modifyUser")
+    public Result<?> modifyUser(@RequestBody User user) {
+        Result<?> result = new Result<>();
+        boolean isOk = userService.modifyUser(user);
+        return isOk ? result.success("修改成功") : result.error("修改失败");
+    }
+
+
 }

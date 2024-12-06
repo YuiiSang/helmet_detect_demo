@@ -4,23 +4,28 @@ import router from '../../routers/router.js';
 import instance from "../../axios.js";
 import { ElMessage } from 'element-plus';
 import { View } from '@element-plus/icons-vue'
-
+import { REPEAT_DELAY } from 'element-plus/es/directives/repeat-click/index.mjs';
+import { filterFields } from 'element-plus/es/components/form/src/utils.mjs';
 let pageNum = ref(1);
 let pageSize = ref(5);
 let tableData = ref([]);
 let totalSize = ref(0);
-let showPwdDialogVisible = ref(false);
-let dialogPassword = ref('');
+let uId = ref('');
+let usernameInput = ref('')
+let user = reactive({})
+let modifyPwd = ref('');
+let checkModiftPwd = ref('');
+let modifyUserVisible = ref(false);
+let siteNameList = ref([{sId: 0, siteName: ''}]);
+let selectedSiteName = ref('');
 const getTableData = () => {
-  instance.get("/getPage", {
+  instance.get("/page/getPage", {
     params: {
       pageNum: pageNum.value,
       pageSize: pageSize.value,
-      pageName: 'userPage'
-    },
-    headers: {
-      "Authorization": "Bearer " + localStorage.getItem("token"),
-    },
+      pageName: 'userPage',
+      input: usernameInput.value
+    }
   }).then((res) => {
     if (res.data.code == 200) {
       tableData.value = res.data.data.list;
@@ -46,54 +51,149 @@ const handleCurrentChange = (newPage) => {
   pageNum.value = newPage;
   getTableData();
 };
-
-const showPassword = (password) => {
-  dialogPassword.value = password;
-  showPwdDialogVisible.value = true;
+const handleModifyUser = () => {
+  instance.post('/user/modifyUser', {
+    uId: user.uId,
+    username: user.username,
+    password: user.password,
+    realName: user.realName,
+    age: user.age,
+    phone: user.phone,
+    email: user.email,
+    siteId: user.sId
+  }).then((res) => {
+    if (res.data.code == 200) {
+      console.log("修改:"+res.data.sId)
+      ElMessage.success(res.data.msg);
+      modifyUserVisible.value = false;
+      getTableData();
+    } else {
+      ElMessage.error(res.data.msg);
+    }
+  }).catch((err) => {
+    console.log(err);
+  });
 };
-onMounted(
-  getTableData
+const deleteUser = (row) => {
+  instance.get('/user/deleteUserById',
+    {
+      params: {
+        uId: row.uId
+      }
+    }
+  ).then((res) => {
+    if (res.data.code == 200) {
+      ElMessage.success(res.data.msg);
+      getTableData();
+    } else {
+      ElMessage.error(res.data.msg);
+    }
+  }).catch((err) => {
+    console.log(err);
+  });
+};
+const showModifyUser = (row) => {
+
+  user.uId = row.uId;
+  user.username = row.username;
+  user.realName = row.realName;
+  user.password = row.password;
+  user.sId = row.sId;
+  user.age = row.age;
+  user.phone = row.phone;
+  user.email = row.email;
+  user.siteName = row.siteName;
+  modifyUserVisible.value = true;
+  console.log(user);
+};
+const getSiteNameList = () => {
+  instance.get('/site/getSiteNameList')
+    .then((res) => {
+      if (res.data.code == 200) {
+        siteNameList.value = res.data.data;
+      } else {
+        ElMessage.error(res.data.msg);
+      }
+    }).catch((err) => {
+      console.log(err);
+    });
+};
+//回显工地名
+const handleSiteChange = (newSiteId) => {
+  const selectedSite = siteNameList.value.find(site => site.sId === newSiteId);
+  if (selectedSite) {
+    selectedSiteName.value = selectedSite.siteName; // 更新显示的工地名
+  }
+};
+onMounted(() => {
+  getTableData();
+  getSiteNameList();
+}
 )
+
 </script>
 
 <template>
   <div class="main-container">
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="uid" label="序号" width="60px"/>
-      <el-table-column prop="username" label="用户名" width="100px"/>
-      <el-table-column label="密码" width="100px">
-
-        <template #default="scope">
-          <!-- 显示眼镜图标按钮 -->
-          <div style="text-align: center;">
-            <el-icon @click="showPassword(scope.row.password)">
-              <View />
-            </el-icon>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="realname" label="realname" width="100px" />
-      <el-table-column prop="age" label="age" width="60px" />
-      <el-table-column prop="phone" label="phone" width="100px" />
-      <el-table-column prop="email" label="email" width="100px" />
-      <el-table-column prop="siteName" label="siteName" width="100px" />
-      <el-table-column prop="siteDesc" label="siteDesc" width="80px" />
-    </el-table>
-    <div class="pagination-block">
-      <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[5, 10, 20, 40]"
-        layout="total, sizes, prev, pager, next, jumper" :total="totalSize" @size-change="handleSizeChange"
-        @current-change="handleCurrentChange" />
+    <div class="search-block">
+      <el-input v-model="usernameInput" style="width: 240px" placeholder="请输入要查找的用户名" />
+      <el-button type="primary" @click="getTableData" style="margin-left: 3%;">搜索</el-button>
     </div>
 
+    <el-table :data="tableData" border style="width: 100%">
+      <el-table-column prop="uId" label="序号" />
+      <el-table-column prop="username" label="用户名" />
+      <el-table-column prop="realName" label="姓名" />
+      <el-table-column prop="age" label="年龄" />
+      <el-table-column prop="phone" label="手机号" />
+      <el-table-column prop="email" label="邮箱" />
+      <el-table-column prop="siteName" label="负责工地" />
+      <el-table-column prop="siteLocation" label="地点" />
+      <el-table-column prop="siteDesc" label="工地描述" />
+      <el-table-column label="操作" width="150px">
+        <template #default="scope">
+          <el-button type="primary" size="small" @click="showModifyUser(scope.row)">修改</el-button>
+          <el-button type="danger" size="small" @click="deleteUser(scope.row)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="paginationClass"> <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize"
+        :page-sizes="[5, 10, 20, 40]" layout="total, sizes, prev, pager, next, jumper" :total="totalSize"
+        @size-change="handleSizeChange" @current-change="handleCurrentChange" /></div>
 
-
-    <!-- 弹出对话框 -->
-    <el-dialog v-model="showPwdDialogVisible" title="Password" width="30%" :before-close="handleCloseDialog">
-      <p>{{ dialogPassword }}</p>
-      <template #footer>
-        <el-button @click="showPwdDialogVisible = false">关闭</el-button>
-      </template>
+    <el-dialog v-model="modifyUserVisible" title="修改用户" width="30%">
+      <el-form :model="user" label-width="100px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="user.username" />
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="user.password" show-password/>
+        </el-form-item>
+        <el-form-item label="姓名" prop="realName">
+          <el-input v-model="user.realName" />
+        </el-form-item>
+        <el-form-item label="年龄" prop="age">
+          <el-input v-model="user.age" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="user.phone" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="user.email" />
+        </el-form-item>
+        <el-form-item label="负责工地" prop="sId">
+              <el-select v-model="user.sId" :placeholder="user.siteName" style="width: 115px">
+                <el-option v-for="item in siteNameList" :key="item.sId" :label="item.siteName" :value="item.sid">
+                </el-option>
+              </el-select>
+        </el-form-item>
+      </el-form>
+      <div>
+        <el-button @click="modifyUserVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleModifyUser">确 定</el-button>
+      </div>
     </el-dialog>
+
   </div>
 </template>
 
@@ -102,9 +202,24 @@ onMounted(
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100vh; /* 占满整个可视区域 */
-  padding: 16px; /* 可选的内边距 */
+  height: 100vh;
+  /* 占满整个可视区域 */
+  padding: 16px;
+  /* 可选的内边距 */
   box-sizing: border-box;
-  overflow: hidden; /* 避免溢出 */
+  overflow: hidden;
+  /* 避免溢出 */
+}
+
+.el-table {
+  max-height: 520px;
+}
+
+.search-block {
+  margin-bottom: 10px;
+}
+
+.paginationClass {
+  margin-top: 20px;
 }
 </style>

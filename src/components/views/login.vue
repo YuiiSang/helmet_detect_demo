@@ -10,7 +10,7 @@ let vcode = ref('')
 let inputVcode = ref('')
 // 获取验证码
 const getVcode = () => {
-  instance.get('/getKaptcha')
+  instance.get('/user/getKaptcha')
    .then(result => {
       vcode.value = result.data.data.vcode;
       vImgCode.value = result.data.data.kaptchaImage;
@@ -34,7 +34,7 @@ const login = () => {
     ElMessage.error('请输入密码')
     return
   }
-  instance.post('/login', {
+  instance.post('/user/login', {
     username: username.value,
     password: password.value
   })

@@ -8,11 +8,22 @@ import {
   User,
   DataLine,
 } from '@element-plus/icons-vue'
-import {ref, reactive} from 'vue'
+import {ref, reactive, onMounted} from 'vue'
 import router from '../../routers/router.js'
 const handleUserManagement = () => {
   router.push('/userManagement')
 }
+const handleOpen = function(key, keyPath) {
+  console.log(key, keyPath);
+}
+
+const handleClose = function(key, keyPath) {
+  console.log(key, keyPath);
+}
+onMounted(()=>{
+  handleUserManagement()
+}
+)
 </script>
 
 <template>
@@ -71,21 +82,23 @@ const handleUserManagement = () => {
 .aside{
 
   overflow: hidden;/* 隐藏超出部分 */
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
   background-color: #545c64;
   height:98vh; 
 }
 .header{
   overflow: hidden;/* 隐藏超出部分 */
 
-  border-top-right-radius: 10px;
+  border-top-right-radius: 15px;
   background-color: #B3C0D1;
+  height:8vh;
 }
 .main{
   overflow: hidden;/* 隐藏超出部分 */
-  border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 15px;
   background-color: #E5E9F2;
+  height:90vh; 
 }
 
 </style>

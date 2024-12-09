@@ -102,8 +102,10 @@ public class UserServiceImpl implements UserService {
         String inputPwd = MD5Util.getMD5(loginUser.getPassword());
         if (inputPwd.equals(user.getPassword())) {
             String sign = jwtComponent.sign(user.getUsername(), 60*60);
+            int siteId = user.getSiteId();
             HashMap<String, String> map = new HashMap<>();
             map.put("token", sign);
+            map.put("siteId", String.valueOf(siteId));
             return new Result<>().success("成功登录").put(map);
         } else {
             // 密码错误

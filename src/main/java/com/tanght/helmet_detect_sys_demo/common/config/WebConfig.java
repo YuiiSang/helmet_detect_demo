@@ -1,6 +1,7 @@
 package com.tanght.helmet_detect_sys_demo.common.config;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -33,8 +34,9 @@ public class WebConfig implements WebMvcConfigurer{
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/**") // 拦截所有路径
-                .excludePathPatterns("/login", "/getKaptcha"); // 排除登录和验证码
+                .excludePathPatterns("/user/login", "/user/getKaptcha","/detect/**"); // 排除登录和验证码
 
     }
+
 
 }

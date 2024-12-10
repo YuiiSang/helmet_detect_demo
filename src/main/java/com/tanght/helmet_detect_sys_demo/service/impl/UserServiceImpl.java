@@ -135,4 +135,21 @@ public class UserServiceImpl implements UserService {
         user.setPassword(MD5Util.getMD5(modifyPwd));
         return userDao.modifyUser(user) > 0;
     }
+
+    @Override
+    public boolean addUser(User user) {
+        boolean isUserNameDuplicate = userDao.findUserByUsername(user.getUsername()) != null;
+        if(!isUserNameDuplicate){
+            String addPwd = user.getPassword();
+            user.setPassword(MD5Util.getMD5(addPwd));
+            return userDao.addUser(user) > 0;
+        }
+        return false;
+    }
+
+    @Override
+    public String getQQMailBySiteId(Integer siteId) {
+        String qqMail = userDao.getQQMailBySiteId(siteId);
+        return qqMail;
+    }
 }

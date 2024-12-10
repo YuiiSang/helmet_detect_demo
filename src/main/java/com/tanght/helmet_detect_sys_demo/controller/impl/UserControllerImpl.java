@@ -47,9 +47,9 @@ public class UserControllerImpl implements UserController {
 
     @Override
     @GetMapping("/deleteUserById")
-    public Result<?> deleteUser(int uid) {
+    public Result<?> deleteUser(int uId) {
         Result<?> result = new Result<>();
-        boolean isOk = userService.deleteUserById(uid);
+        boolean isOk = userService.deleteUserById(uId);
         return isOk ? result.success("删除成功") : result.error("删除失败");
     }
 
@@ -59,6 +59,14 @@ public class UserControllerImpl implements UserController {
         Result<?> result = new Result<>();
         boolean isOk = userService.modifyUser(user);
         return isOk ? result.success("修改成功") : result.error("修改失败");
+    }
+
+    @Override
+    @PostMapping("/addUser")
+    public Result<?> addUser(@RequestBody User user) {
+        Result<?> result = new Result<>();
+        boolean isOk = userService.addUser(user);
+        return isOk ? result.success("新增用户成功") : result.error("新增用户失败");
     }
 
 

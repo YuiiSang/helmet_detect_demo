@@ -50,4 +50,8 @@ public interface UserService {
     boolean deleteUserById(int id);
 
     boolean modifyUser(User user);
+
+    boolean addUser(User user);
+
+    String getQQMailBySiteId(Integer siteId);
 }

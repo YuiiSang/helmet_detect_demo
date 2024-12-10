@@ -2,6 +2,7 @@ package com.tanght.helmet_detect_sys_demo.service.impl;
 
 import com.tanght.helmet_detect_sys_demo.common.vo.ModifyUserSite;
 import com.tanght.helmet_detect_sys_demo.dao.SiteDao;
+import com.tanght.helmet_detect_sys_demo.pojo.Site;
 import com.tanght.helmet_detect_sys_demo.service.SiteService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,21 @@ public class SiteServiceImpl implements SiteService {
     @Override
     public List<ModifyUserSite> getSiteNameList() {
         return siteDao.getSiteNameList();
+    }
+
+    @Override
+    public boolean modifySite(Site site) {
+        return siteDao.modifySite(site) > 0;
+    }
+
+    @Override
+    public boolean addSite(Site site) {
+        int result = siteDao.addSite(site);
+        return result > 0;
+    }
+
+    @Override
+    public boolean deleteSiteById(Integer sId) {
+        return siteDao.deleteSiteById(sId) > 0;
     }
 }

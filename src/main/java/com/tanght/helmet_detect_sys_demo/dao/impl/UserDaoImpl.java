@@ -66,4 +66,16 @@ public class UserDaoImpl implements UserDao {
         return jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRealName(), user.getAge(), user.getPhone(), user.getEmail(), user.getSiteId(), user.getUId());
     }
 
+    @Override
+    public int addUser(User user) {
+        String sql = "insert into user(username, password, realName, age, phone, email, site_id) values(?, ?, ?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, user.getUsername(), user.getPassword(), user.getRealName(), user.getAge(), user.getPhone(), user.getEmail(), user.getSiteId());
+    }
+
+    @Override
+    public String getQQMailBySiteId(Integer siteId) {
+        String sql = "select email from user where site_id = ? LIMIT 1";
+        return jdbcTemplate.queryForObject(sql, new Object[]{siteId}, String.class);
+    }
+
 }

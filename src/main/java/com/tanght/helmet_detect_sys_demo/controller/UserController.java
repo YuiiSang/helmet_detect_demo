@@ -26,4 +26,6 @@ public interface UserController {
     Result<?> deleteUser(int id);
     //修改用户
     Result<?> modifyUser(User user);
+    //添加用户
+    Result<?> addUser(User user);
 }

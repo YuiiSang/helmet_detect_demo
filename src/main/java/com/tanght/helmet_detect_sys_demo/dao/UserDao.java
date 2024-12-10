@@ -33,4 +33,7 @@ public interface UserDao {
 
     int modifyUser(User user);
 
+    int addUser(User user);
+
+    String getQQMailBySiteId(Integer siteId);
 }

@@ -1,6 +1,7 @@
 package com.tanght.helmet_detect_sys_demo.service;
 
 import com.tanght.helmet_detect_sys_demo.common.vo.ModifyUserSite;
+import com.tanght.helmet_detect_sys_demo.pojo.Site;
 
 import java.util.List;
 
@@ -16,4 +17,8 @@ public interface SiteService {
      * @return
      */
     List<ModifyUserSite> getSiteNameList();
+
+    boolean modifySite(Site site);
+    boolean addSite(Site site);
+    boolean deleteSiteById(Integer sId);
 }

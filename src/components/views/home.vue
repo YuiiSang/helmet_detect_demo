@@ -13,6 +13,18 @@ import router from '../../routers/router.js'
 const handleUserManagement = () => {
   router.push('/userManagement')
 }
+const handleDetectManagement = () => {
+  router.push('/detectManagement')
+}
+const handleSiteManagement = () => {
+  router.push('/siteManagement')
+}
+const handleAreaManagement = () => {
+  router.push('/areaManagement')
+}
+const handleViolationManagement = () => {
+  router.push('/violationManagement')
+}
 const handleOpen = function(key, keyPath) {
   console.log(key, keyPath);
 }
@@ -20,8 +32,12 @@ const handleOpen = function(key, keyPath) {
 const handleClose = function(key, keyPath) {
   console.log(key, keyPath);
 }
-onMounted(()=>{
-  handleUserManagement()
+onMounted(() => {
+  if (localStorage.getItem('siteId') == '0') {
+    handleUserManagement();
+  } else {
+    handleAreaManagement();
+  }
 }
 )
 </script>
@@ -39,26 +55,40 @@ onMounted(()=>{
         @open="handleOpen"
         @close="handleClose"
       >
-        <el-menu-item index="1" @click="handleUserManagement">
+        <el-sub-menu index="1" @click="handleUserManagement" >
+          <template #title>
           <el-icon><User /></el-icon>
           <span>用户管理</span>
-        </el-menu-item>
-        <el-menu-item index="2">
+          </template>
+        
+        </el-sub-menu>
+
+        <el-sub-menu index="2">
+          <template #title>
           <el-icon><location /></el-icon>
           <span>地点管理</span>
-        </el-menu-item>
-        <el-menu-item index="3">
+          </template>
+            <el-menu-item index="2-1" @click="handleSiteManagement">工地管理</el-menu-item>
+            <el-menu-item index="2-2" @click="handleAreaManagement">区域管理</el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu index="3" @click="handleViolationManagement">
+          <template #title>
           <el-icon><document /></el-icon>
           <span>违规记录管理</span>
-        </el-menu-item>
-        <el-menu-item index="4">
+          </template>
+        </el-sub-menu>
+<!--         <el-sub-menu index="4">
+          <template #title>
           <el-icon><DataLine /></el-icon>
           <span>查看统计报表</span>
-        </el-menu-item>
-        <el-menu-item index="5">
+          </template>
+        </el-sub-menu> -->
+        <el-sub-menu index="5" @click="handleDetectManagement">
+          <template #title>
           <el-icon><VideoCamera /></el-icon>
           <span>监控管理</span>
-        </el-menu-item>
+          </template>
+        </el-sub-menu>
       </el-menu>
 
       </el-aside>

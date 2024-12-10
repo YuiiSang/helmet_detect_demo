@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const instance = axios.create({
   baseURL: 'http://localhost:8088', // 后端服务的基础URL
-  timeout: 10000, // 请求超时时间
+  timeout: 30000, // 请求超时时间
   headers: {
     'Content-Type': 'application/json', // 设置默认 Content-Type
   },

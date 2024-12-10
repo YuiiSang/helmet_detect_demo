@@ -4,7 +4,7 @@ import instance from '../../axios';
 import { ElMessage } from 'element-plus';
 import router from '../../routers/router.js'
 let username = ref('admin')
-let password = ref()
+let password = ref('654321')
 let vImgCode = ref('')
 let vcode = ref('')
 let inputVcode = ref('')
@@ -43,6 +43,7 @@ const login = () => {
     if (data.code == 200) {
       ElMessage.success(data.msg)
       localStorage.setItem('token', data.data.token)
+      localStorage.setItem('siteId', data.data.siteId)
       router.push('/home')
     } else {
       ElMessage.error(data.msg)

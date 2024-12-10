@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import router from '../../routers/router.js';
 import instance from "../../axios.js";
-import { ElMessage } from 'element-plus';
+import { ElMessage , ElMessageBox} from 'element-plus';
 import { View } from '@element-plus/icons-vue'
 import { REPEAT_DELAY } from 'element-plus/es/directives/repeat-click/index.mjs';
 import { filterFields } from 'element-plus/es/components/form/src/utils.mjs';
@@ -13,9 +13,9 @@ let totalSize = ref(0);
 let uId = ref('');
 let usernameInput = ref('')
 let user = reactive({})
-let modifyPwd = ref('');
-let checkModiftPwd = ref('');
+let addUser = reactive({})
 let modifyUserVisible = ref(false);
+let addUserVisible = ref(false);
 let siteNameList = ref([{sId: 0, siteName: ''}]);
 let selectedSiteName = ref('');
 const getTableData = () => {
@@ -75,6 +75,11 @@ const handleModifyUser = () => {
   });
 };
 const deleteUser = (row) => {
+  ElMessageBox.confirm('确定要删除这条记录吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
   instance.get('/user/deleteUserById',
     {
       params: {
@@ -90,7 +95,8 @@ const deleteUser = (row) => {
     }
   }).catch((err) => {
     console.log(err);
-  });
+  });}
+  )
 };
 const showModifyUser = (row) => {
 
@@ -106,6 +112,10 @@ const showModifyUser = (row) => {
   modifyUserVisible.value = true;
   console.log(user);
 };
+const showAddUserDialog = () => {
+  addUser = reactive({})
+  addUserVisible.value = true;
+};
 const getSiteNameList = () => {
   instance.get('/site/getSiteNameList')
     .then((res) => {
@@ -118,12 +128,28 @@ const getSiteNameList = () => {
       console.log(err);
     });
 };
-//回显工地名
-const handleSiteChange = (newSiteId) => {
-  const selectedSite = siteNameList.value.find(site => site.sId === newSiteId);
-  if (selectedSite) {
-    selectedSiteName.value = selectedSite.siteName; // 更新显示的工地名
-  }
+
+//新增用户
+const handleAddUser = () => {
+  instance.post('/user/addUser', {
+    username: addUser.username,
+    password: addUser.password,
+    realName: addUser.realName,
+    age: addUser.age,
+    phone: addUser.phone,
+    email: addUser.email,
+    siteId: addUser.sId
+  }).then((res) => {
+    if (res.data.code == 200) {
+      ElMessage.success(res.data.msg);
+      addUserVisible.value = false;
+      getTableData();
+    } else {
+      ElMessage.error(res.data.msg);
+    }
+  }).catch((err) => {
+    console.log(err);
+  });
 };
 onMounted(() => {
   getTableData();
@@ -138,6 +164,7 @@ onMounted(() => {
     <div class="search-block">
       <el-input v-model="usernameInput" style="width: 240px" placeholder="请输入要查找的用户名" />
       <el-button type="primary" @click="getTableData" style="margin-left: 3%;">搜索</el-button>
+      <el-button type="primary" @click="showAddUserDialog">新增用户</el-button>
     </div>
 
     <el-table :data="tableData" border style="width: 100%">
@@ -191,6 +218,38 @@ onMounted(() => {
       <div>
         <el-button @click="modifyUserVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleModifyUser">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog v-model="addUserVisible" title="新增用户" width="30%">
+      <el-form :model="addUser" label-width="100px">
+        <el-form-item label="用户名" prop="username" >
+          <el-input v-model="addUser.username" placeholder="用户名重名会添加失败"/>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="addUser.password" show-password/>
+        </el-form-item>
+        <el-form-item label="姓名" prop="realName">
+          <el-input v-model="addUser.realName" />
+        </el-form-item>
+        <el-form-item label="年龄" prop="age">
+          <el-input v-model="addUser.age" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="addUser.phone" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="addUser.email" />
+        </el-form-item>
+        <el-form-item label="负责工地" prop="sId">
+              <el-select v-model="addUser.sId" :placeholder="addUser.siteName" style="width: 115px">
+                <el-option v-for="item in siteNameList" :key="item.sId" :label="item.siteName" :value="item.sid">
+                </el-option>
+              </el-select>
+        </el-form-item>
+      </el-form>
+      <div>
+        <el-button @click="addUserVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAddUser">确 定</el-button>
       </div>
     </el-dialog>
 

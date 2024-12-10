@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object Detection Stream</title>
+    <style>
+        .video-container {
+            margin-bottom: 20px;
+        }
+        .image-container {
+            margin-bottom: 20px;
+        }
+        .image-container img {
+            width: 20vh;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Object Detection Stream</h1>
+    <div>
+        <input type="text" id="cameraIp" placeholder="Enter camera IP">
+        <button onclick="addCameraStream()">Add Stream</button>
+    </div>
+    <div id="videoContainer"></div>
+    <button onclick="showImages()">Show Images</button>
+    <div id="imageContainer"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <script>
+        function addCameraStream() {
+            const cameraIp = document.getElementById('cameraIp').value;
+            if (cameraIp) {
+                const videoContainer = document.getElementById('videoContainer');
+                const videoDiv = document.createElement('div');
+                videoDiv.className = 'video-container';
+                const img = document.createElement('img');
+                img.src = `http://127.0.0.1:5000/video_feed?source=${encodeURIComponent(cameraIp)}`; 
+                videoDiv.appendChild(img);
+                videoContainer.appendChild(videoDiv);
+                // 清空输入框
+                document.getElementById('cameraIp').value = '';
+            } else {
+                alert('Please enter a camera IP address.');
+            }
+        }
+
+        function showImages() {
+        $.ajax({
+            url: 'http://127.0.0.1:5000/get_images',
+            type: 'GET',
+            success: function(response) {
+                const images = response;
+                const imageContainer = document.getElementById('imageContainer');
+                imageContainer.innerHTML = ''; // Clear previous images
+                
+                // 按视频源分组图片
+                const imagesBySource = images.reduce((acc, image) => {
+                    (acc[image.source] = acc[image.source] || []).push(image);
+                    return acc;
+                }, {});
+
+                // 遍历每个视频源的图片组
+                for (const [source, sourceImages] of Object.entries(imagesBySource)) {
+                    const sourceDiv = document.createElement('div');
+                    sourceDiv.className = 'image-container';
+                    sourceDiv.innerHTML = `<h3>Images from ${source}</h3>`;
+                    
+                    sourceImages.forEach(function(imageData) {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = `data:image/jpeg;base64,${imageData.image}`;
+                        imgElement.alt = `Image from ${source} at ${new Date(imageData.timestamp).toLocaleString()}`;
+                        sourceDiv.appendChild(imgElement);
+                    });
+                    
+                    imageContainer.appendChild(sourceDiv);
+                }
+            },
+            error: function(error) {
+                console.log('Error fetching images:', error);
+                alert('Failed to fetch images. Please check the server and try again.');
+            }
+        });
+    }
+    </script>
+</body>
+</html>
